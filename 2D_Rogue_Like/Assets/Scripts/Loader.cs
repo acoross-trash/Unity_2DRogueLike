@@ -20,6 +20,10 @@ public class Loader : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	
+//		if (Input.GetKey ("up"))
+//		{
+//			Destroy(gameManager);
+//			Instantiate (gameManager);
+//		}
 	}
 }
