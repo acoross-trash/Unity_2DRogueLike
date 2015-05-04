@@ -21,7 +21,7 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-	// size of game board
+	#region 에디터에서 연결
 	public int columns = 8;
 	public int rows = 8;
 
@@ -29,30 +29,33 @@ public class BoardManager : MonoBehaviour
 	public Count foodCount = new Count (1, 5);
 	public GameObject exit;
 	public GameObject[] floorTiles;
+	public GameObject[] outerWallTiles;
 	public GameObject[] wallTiles;
 	public GameObject[] foodTiles;
 	public GameObject[] enemyTiles;
-	public GameObject[] outerWallTiles;
+	#endregion
 
-	private Transform boardHolder;
-	private List<Vector3> gridPositions = new List<Vector3>();
+	private Transform boardHolder;		// 게임판 GameObject 의 Transform의 reference
+	private List<Vector3> gridPositions = new List<Vector3>();		// GameObject 생성을 위한 gridPosition 리스트. 사용된 위치는 리스트에서 제거.
 
 
-	void InitializeList()
+	public void SetupScene(int level)
 	{
-		gridPositions.Clear ();
-		for (int x = 1; x < columns - 1; ++x) 
-		{
-			for (int y = 1; y < rows - 1; ++y)
-			{
-				gridPositions.Add (new Vector3 (x, y, 0f));
-			}
-		}
+		BoardSetup();
+		InitializeGridPositions();
+		LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
+		LayoutObjectAtRandom(foodTiles, foodCount.minimum, foodCount.maximum);
+		
+		int enemyCount = (int)Mathf.Log(level, 2f);
+		LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
+
+		Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity);
 	}
 
+	#region private interface
 	void BoardSetup()
 	{
-		boardHolder = new GameObject ("Board").transform;
+		boardHolder = (new GameObject ("Board")).transform;
 
 		for (int x = -1; x < columns + 1; ++x) 
 		{
@@ -70,14 +73,19 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-	Vector3 RandomPosition()
+	// gridPosition 설정.
+	void InitializeGridPositions()
 	{
-		int randomIndex = Random.Range(0, gridPositions.Count);
-		Vector3 randomPosition = gridPositions[randomIndex];
-		gridPositions.RemoveAt(randomIndex);
-		return randomPosition;
+		gridPositions.Clear ();
+		for (int x = 1; x < columns - 1; ++x) 
+		{
+			for (int y = 1; y < rows - 1; ++y)
+			{
+				gridPositions.Add (new Vector3 (x, y, 0f));
+			}
+		}
 	}
-	
+
 	void LayoutObjectAtRandom(GameObject[] tileArray, int minimum, int maximum)
 	{
 		int objectCount = Random.Range(minimum, maximum + 1);
@@ -90,25 +98,12 @@ public class BoardManager : MonoBehaviour
 		}
 	}
 
-	public void SetupScene(int level)
+	Vector3 RandomPosition()
 	{
-		BoardSetup();
-		InitializeList();
-		LayoutObjectAtRandom(wallTiles, wallCount.minimum, wallCount.maximum);
-		LayoutObjectAtRandom(foodTiles, foodCount.minimum, foodCount.maximum);
-
-		int enemyCount = (int)Mathf.Log(level, 2f);
-		LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
-		Instantiate(exit, new Vector3(columns - 1, rows - 1, 0f), Quaternion.identity);
+		int randomIndex = Random.Range(0, gridPositions.Count);
+		Vector3 randomPosition = gridPositions[randomIndex];
+		gridPositions.RemoveAt(randomIndex);
+		return randomPosition;
 	}
-
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+	#endregion
 }

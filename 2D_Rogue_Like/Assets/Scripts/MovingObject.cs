@@ -30,8 +30,8 @@ public abstract class MovingObject : MonoBehaviour
 
 		if (hit.transform == null)
 		{
+			Debug.Log ("StartCoroutine");
 			StartCoroutine(SmoothMovement(end));
-			return true;
 		}
 
 		return false;
@@ -59,9 +59,10 @@ public abstract class MovingObject : MonoBehaviour
 	protected IEnumerator SmoothMovement (Vector3 end)
 	{
 		float sqrRemainingDistance = (gameObject.transform.position - end).sqrMagnitude;
-
+		int i = 0;
 		while (sqrRemainingDistance > float.Epsilon)
 		{
+			Debug.Log ("Smooth inner loop " + ++i);
 			Vector3 newPosition = Vector3.MoveTowards(rb2D.position, end, inverseMoveTime * Time.deltaTime);
 			rb2D.MovePosition(newPosition);
 			sqrRemainingDistance = (transform.position - end).sqrMagnitude;

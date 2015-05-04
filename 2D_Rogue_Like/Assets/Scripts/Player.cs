@@ -25,7 +25,7 @@ public class Player : MovingObject
 		GameManager.instance.playerFoodPoints = food;
 
 	}
-	// Update is called once per frame
+
 	void Update () 
 	{
 		if (!GameManager.instance.playersTurn) return;
@@ -43,6 +43,7 @@ public class Player : MovingObject
 
 		if (vertical != 0 || horizontal != 0)
 		{
+			Debug.Log(vertical.ToString());
 			AttemptMove<Wall>(horizontal, vertical);
 		}
 	}

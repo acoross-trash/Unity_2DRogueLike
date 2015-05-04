@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Loader : MonoBehaviour 
 {
-	public GameObject gameManager;
+	public GameObject gameManagerPrefab;
 
 	// Use this for initialization
 	void Awake ()
@@ -13,7 +13,7 @@ public class Loader : MonoBehaviour
 		// 		즉, Instantiate 를 통해 gameManager prefab 이 GameObject 가 되는 것.
 		if (GameManager.instance == null)
 		{
-			Instantiate(gameManager);
+			Instantiate(gameManagerPrefab);
 		}
 	}
 	
@@ -22,7 +22,7 @@ public class Loader : MonoBehaviour
 	{
 //		if (Input.GetKey ("up"))
 //		{
-//			Destroy(gameManager);
+		//			Destroy(gameManagerPrefab);
 //			Instantiate (gameManager);
 //		}
 	}
