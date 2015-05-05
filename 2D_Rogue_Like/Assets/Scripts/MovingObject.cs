@@ -18,6 +18,25 @@ public abstract class MovingObject : MonoBehaviour
 		rb2D = GetComponent<Rigidbody2D>();
 		inverseMoveTime = 1f / moveTime;
 	}
+	
+	protected virtual void AttemptMove<T> (int xDir, int yDir)
+		where T : Component
+	{
+		RaycastHit2D hit;
+		bool canMove = Move (xDir, yDir, out hit);
+		
+		if (hit.transform == null)
+		{
+			return;
+		}
+		
+		T hitComponent = hit.transform.GetComponent<T>();
+		
+		if (!canMove && hitComponent != null)
+		{
+			OnCantMove(hitComponent);
+		}
+	}
 
 	protected bool Move(int xDir, int yDir, out RaycastHit2D hit)
 	{
@@ -30,43 +49,25 @@ public abstract class MovingObject : MonoBehaviour
 
 		if (hit.transform == null)
 		{
-			Debug.Log ("StartCoroutine");
 			StartCoroutine(SmoothMovement(end));
+
+			return true;
 		}
 
 		return false;
 	}
 
-	protected virtual void AttemptMove<T> (int xDir, int yDir)
-		where T : Component
-	{
-		RaycastHit2D hit;
-		bool canMove = Move (xDir, yDir, out hit);
-
-		if (hit.transform == null)
-		{
-			return;
-		}
-
-		T hitComponent = hit.transform.GetComponent<T>();
-
-		if (!canMove && hitComponent != null)
-		{
-			OnCantMove(hitComponent);
-		}
-	}
-
-	protected IEnumerator SmoothMovement (Vector3 end)
+	protected IEnumerator SmoothMovement (Vector3 end)	// coroutine 은 yield 를 단위로 나눠짐. 기본적으로 frame 마다 호출됨.
 	{
 		float sqrRemainingDistance = (gameObject.transform.position - end).sqrMagnitude;
-		int i = 0;
+
 		while (sqrRemainingDistance > float.Epsilon)
 		{
-			Debug.Log ("Smooth inner loop " + ++i);
 			Vector3 newPosition = Vector3.MoveTowards(rb2D.position, end, inverseMoveTime * Time.deltaTime);
 			rb2D.MovePosition(newPosition);
 			sqrRemainingDistance = (transform.position - end).sqrMagnitude;
-			yield return null;
+
+			yield return null; // http://docs.unity3d.com/Manual/Coroutines.html
 		}
 	}
 

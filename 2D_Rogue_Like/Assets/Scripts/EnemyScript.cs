@@ -9,9 +9,12 @@ public class EnemyScript : MovingObject
 	private Transform target;
 	private bool skipMove;
 
+	public AudioClip enemyAttack1;
+	public AudioClip enemyAttack2;
+
 	protected override void Start () 
 	{
-		GameManager.instance.AddEnemyToList (this);
+		GameManagerScript.instance.AddEnemyToList (this);
 
 		animator = GetComponent<Animator>();
 		target = GameObject.FindGameObjectWithTag("Player").transform;
@@ -20,6 +23,7 @@ public class EnemyScript : MovingObject
 	
 	protected override void AttemptMove<T>(int xDir, int yDir)
 	{
+		// skipMove: 두턴에 한 번만 움직인다.
 		if (skipMove)
 		{
 			skipMove = false;
@@ -54,5 +58,6 @@ public class EnemyScript : MovingObject
 
 		hitPlayer.LoseFood (playerDamage);
 
+		SoundManagerScript.instance.RandomizeSfx(enemyAttack1, enemyAttack2);
 	}
 }
